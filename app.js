@@ -1,15 +1,14 @@
 async function randomGiphy() {
     const res = await axios.get('http://api.giphy.com/v1/gifs/random', {params:{api_key: 'MhAodEJIJxQMxW9XqxKjyXfNYdLoOIym', limit: 1}});
-    console.log('res', res);
+    console.log('random res', res);
     const gif = res.data.data.images.fixed_height;
-    console.log('gif', gif);
     appendGiphy(gif.url);
 }
 
 async function searchGiphy(q) {
     const res = await axios.get('http://api.giphy.com/v1/gifs/search', {params: new Params(q)});
-    console.log(res);
-    const gif = res.data.data.images.fixed_height;
+    console.log('search res', res);
+    const gif = res.data.data[0].images.fixed_height;
     appendGiphy(gif.url);
 }
 
@@ -35,10 +34,12 @@ function appendGiphy(gif) {
 searchBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const qTerm = document.getElementById('search');
-    if(qTerm.value.length >= 1) {
-        searchGiphy(qTerm.value);
+    if(!qTerm.value) {
+        randomGiphy();
+        return;
     }
-    randomGiphy();    
+    searchGiphy(qTerm.value);
+    qTerm.value = '';  
 })
 
 const removeBtn = document.getElementById('remove');
